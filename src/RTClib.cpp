@@ -56,31 +56,6 @@
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
 #endif
 
-/**************************************************************************/
-/*!
-    @brief Write value to register.
-    @param reg register address
-    @param val value to write
-*/
-/**************************************************************************/
-void RTC_I2C::write_register(uint8_t reg, uint8_t val) {
-  uint8_t buffer[2] = {reg, val};
-  i2c_dev->write(buffer, 2);
-}
-
-/**************************************************************************/
-/*!
-    @brief Read value from register.
-    @param reg register address
-    @return value of register
-*/
-/**************************************************************************/
-uint8_t RTC_I2C::read_register(uint8_t reg) {
-  uint8_t buffer[1];
-  i2c_dev->write(&reg, 1);
-  i2c_dev->read(buffer, 1);
-  return buffer[0];
-}
 
 /**************************************************************************/
 // utility code, some of this could be exposed in the DateTime API if needed

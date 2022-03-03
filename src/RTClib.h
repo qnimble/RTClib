@@ -22,7 +22,7 @@
 #ifndef _RTCLIB_H_
 #define _RTCLIB_H_
 
-#include <Adafruit_I2CDevice.h>
+//#include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 
 class TimeSpan;
@@ -318,126 +318,6 @@ protected:
   int32_t _seconds; ///< Actual TimeSpan value is stored as seconds
 };
 
-/**************************************************************************/
-/*!
-    @brief  A generic I2C RTC base class. DO NOT USE DIRECTLY
-*/
-/**************************************************************************/
-class RTC_I2C {
-protected:
-  /*!
-      @brief  Convert a binary coded decimal value to binary. RTC stores
-    time/date values as BCD.
-      @param val BCD value
-      @return Binary value
-  */
-  static uint8_t bcd2bin(uint8_t val) { return val - 6 * (val >> 4); }
-  /*!
-      @brief  Convert a binary value to BCD format for the RTC registers
-      @param val Binary value
-      @return BCD value
-  */
-  static uint8_t bin2bcd(uint8_t val) { return val + 6 * (val / 10); }
-  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
-  uint8_t read_register(uint8_t reg);
-  void write_register(uint8_t reg, uint8_t val);
-};
-
-/**************************************************************************/
-/*!
-    @brief  RTC based on the DS1307 chip connected via I2C and the Wire library
-*/
-/**************************************************************************/
-class RTC_DS1307 : RTC_I2C {
-public:
-  boolean begin(TwoWire *wireInstance = &Wire);
-  void adjust(const DateTime &dt);
-  uint8_t isrunning(void);
-  DateTime now();
-  Ds1307SqwPinMode readSqwPinMode();
-  void writeSqwPinMode(Ds1307SqwPinMode mode);
-  uint8_t readnvram(uint8_t address);
-  void readnvram(uint8_t *buf, uint8_t size, uint8_t address);
-  void writenvram(uint8_t address, uint8_t data);
-  void writenvram(uint8_t address, const uint8_t *buf, uint8_t size);
-};
-
-/**************************************************************************/
-/*!
-    @brief  RTC based on the DS3231 chip connected via I2C and the Wire library
-*/
-/**************************************************************************/
-class RTC_DS3231 : RTC_I2C {
-public:
-  boolean begin(TwoWire *wireInstance = &Wire);
-  void adjust(const DateTime &dt);
-  bool lostPower(void);
-  DateTime now();
-  Ds3231SqwPinMode readSqwPinMode();
-  void writeSqwPinMode(Ds3231SqwPinMode mode);
-  bool setAlarm1(const DateTime &dt, Ds3231Alarm1Mode alarm_mode);
-  bool setAlarm2(const DateTime &dt, Ds3231Alarm2Mode alarm_mode);
-  void disableAlarm(uint8_t alarm_num);
-  void clearAlarm(uint8_t alarm_num);
-  bool alarmFired(uint8_t alarm_num);
-  void enable32K(void);
-  void disable32K(void);
-  bool isEnabled32K(void);
-  float getTemperature(); // in Celsius degree
-  /*!
-      @brief  Convert the day of the week to a representation suitable for
-              storing in the DS3231: from 1 (Monday) to 7 (Sunday).
-      @param  d Day of the week as represented by the library:
-              from 0 (Sunday) to 6 (Saturday).
-      @return the converted value
-  */
-  static uint8_t dowToDS3231(uint8_t d) { return d == 0 ? 7 : d; }
-};
-
-/**************************************************************************/
-/*!
-    @brief  RTC based on the PCF8523 chip connected via I2C and the Wire library
-*/
-/**************************************************************************/
-class RTC_PCF8523 : RTC_I2C {
-public:
-  boolean begin(TwoWire *wireInstance = &Wire);
-  void adjust(const DateTime &dt);
-  boolean lostPower(void);
-  boolean initialized(void);
-  DateTime now();
-  void start(void);
-  void stop(void);
-  uint8_t isrunning();
-  Pcf8523SqwPinMode readSqwPinMode();
-  void writeSqwPinMode(Pcf8523SqwPinMode mode);
-  void enableSecondTimer(void);
-  void disableSecondTimer(void);
-  void enableCountdownTimer(PCF8523TimerClockFreq clkFreq, uint8_t numPeriods,
-                            uint8_t lowPulseWidth);
-  void enableCountdownTimer(PCF8523TimerClockFreq clkFreq, uint8_t numPeriods);
-  void disableCountdownTimer(void);
-  void deconfigureAllTimers(void);
-  void calibrate(Pcf8523OffsetMode mode, int8_t offset);
-};
-
-/**************************************************************************/
-/*!
-    @brief  RTC based on the PCF8563 chip connected via I2C and the Wire library
-*/
-/**************************************************************************/
-class RTC_PCF8563 : RTC_I2C {
-public:
-  boolean begin(TwoWire *wireInstance = &Wire);
-  boolean lostPower(void);
-  void adjust(const DateTime &dt);
-  DateTime now();
-  void start(void);
-  void stop(void);
-  uint8_t isrunning();
-  Pcf8563SqwPinMode readSqwPinMode();
-  void writeSqwPinMode(Pcf8563SqwPinMode mode);
-};
 
 /**************************************************************************/
 /*!
